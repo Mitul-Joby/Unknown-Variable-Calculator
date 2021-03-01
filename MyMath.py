@@ -18,7 +18,7 @@ def TRIANGLE_AREA_AREA(l,b,h,r,k):
 #-------------------RECTANGLE------------------
 #AREA
 def RECTANGLE_AREA_LENGTH(l,b,h,r,k):
-	return float(k) / float(h)
+	return float(k) / float(b)
 def RECTANGLE_AREA_BREADTH(l,b,h,r,k):
 	return float(k) / float(l)
 def RECTANGLE_AREA_AREA(l,b,h,r,k):
