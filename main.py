@@ -5,8 +5,7 @@ It operates with the help of MyMath.py module to calculate areas, volumes, csa, 
 
 import MyMath
 from os import path
-from tkinter import Tk,Text,BOTH,END,Menu,StringVar,Label,W,E,N,S,Entry,Button
-from tkinter import ttk
+from tkinter import Tk,Text,BOTH,END,Menu,StringVar,Label,W,E,N,S,Entry,Button,ttk
 
 def notes():	
 	root = Tk() 
@@ -42,11 +41,16 @@ def calculate():
 	h = height.get()  
 	r = radius.get()  
 	k = known.get()   
-	myText.set( str(getattr(MyMath,funcName)(l,b,h,r,k)) )
-
+	try:
+		Result.set( str(getattr(MyMath,funcName)(l,b,h,r,k)) )
+	except AttributeError:
+		Result.set('Invalid Operation')
+		
 master = Tk()
-master.title('Area and perimeter calculator')
-myText=StringVar()
+master.title('CALCULATOR')
+Result=StringVar()
+Error=StringVar()
+ErrorReason=StringVar()
 
 options = {'SELECT SHAPE':{'----------':['----------'] },
 		'TRIANGLE'	:{'----------':['----------'],
@@ -105,88 +109,100 @@ def callback2(eventObject):
 unknown.bind('<Button-1>', callback2)
 unknown.current(0)
 
-Label(master, text="LENGTH  ").grid(row=3, sticky=W)
-Label(master, text="BREADTH ").grid(row=4, sticky=W)
-Label(master, text="HEIGHT  ").grid(row=5, sticky=W)
-Label(master, text="RADIUS  ").grid(row=6, sticky=W)
-Label(master, text="AREA/VOL").grid(row=7, sticky=W)
-Label(master, text="        ").grid(row=8, sticky=W)
-Label(master, text="RESULT: ").grid(row=9, sticky=W)
-Label(master, text="        ").grid(row=10, sticky=W)
-Label(master, text="NOTE:"   ).grid(row=11, sticky=W)
+Label(master, text="LENGTH    ").grid(row=3, sticky=W)
+Label(master, text="BREADTH   ").grid(row=4, sticky=W)
+Label(master, text="HEIGHT    ").grid(row=5, sticky=W)
+Label(master, text="RADIUS    ").grid(row=6, sticky=W)
+Label(master, text="AREA/VOL  ").grid(row=7, sticky=W)
+Label(master, text="          ").grid(row=8, sticky=W)
+Label(master, text="RESULT:   ").grid(row=9, sticky=W)
+Label(master, text="          ").grid(row=10, sticky=W)
+Label(master, text="NOTE:     ").grid(row=11, sticky=W)
 
-Label(master, text="", textvariable=myText).grid(row=9,column=1, sticky=W)
+Label(master, text="", textvariable=Result).grid(row=9,column=1, sticky=W)
+Label(master, text="", textvariable=Error).grid(row=26,column=0, sticky=E)
+Label(master, text="", textvariable=ErrorReason).grid(row=26,column=1, sticky=W)
 expression = "" 
 
 def press(num): 
     global expression 
     expression = expression + str(num) 
     equation.set(expression)
+
 def equalpress(): 
-        global expression 
-        total = str(eval(expression)) 
-        equation.set(total) 
-        expression = ""  	  
+		global expression
+		try:
+			total = str(eval(expression))
+			equation.set(total)
+			Error.set("")
+			ErrorReason.set("")
+		except ZeroDivisionError:
+			Error.set("ERROR:")
+			ErrorReason.set("Can't divide by 0")
+		except:
+			Error.set("ERROR:")
+			ErrorReason.set("Invalid Expression")
+		expression = ""
+
 def clear(): 
     global expression 
     expression = "" 
     equation.set("") 
-if __name__ == "__main__": 
- 
-    equation = StringVar() 
-    expression_field = Entry(master, textvariable=equation) 
-    expression_field.grid(row=20,columnspan=4, ipadx=70)
 
-    button1 = Button(master, text=' 1 ', fg='black', bg='white',command=lambda: press(1), height=1, width=7) 
-    button1.grid(row=22, column=0) 
- 
-    button2 = Button(master, text=' 2 ', fg='black', bg='white',command=lambda: press(2), height=1, width=7) 
-    button2.grid(row=22, column=1) 
- 
-    button3 = Button(master, text=' 3 ', fg='black', bg='white',command=lambda: press(3), height=1, width=7) 
-    button3.grid(row=22, column=2) 
- 
-    button4 = Button(master, text=' 4 ', fg='black', bg='white',command=lambda: press(4), height=1, width=7) 
-    button4.grid(row=23, column=0) 
- 
-    button5 = Button(master, text=' 5 ', fg='black', bg='white',command=lambda: press(5), height=1, width=7) 
-    button5.grid(row=23, column=1) 
- 
-    button6 = Button(master, text=' 6 ', fg='black', bg='white',command=lambda: press(6), height=1, width=7) 
-    button6.grid(row=23, column=2) 
- 
-    button7 = Button(master, text=' 7 ', fg='black', bg='white',command=lambda: press(7), height=1, width=7) 
-    button7.grid(row=24, column=0) 
- 
-    button8 = Button(master, text=' 8 ', fg='black', bg='white',command=lambda: press(8), height=1, width=7) 
-    button8.grid(row=24, column=1) 
- 
-    button9 = Button(master, text=' 9 ', fg='black', bg='white',command=lambda: press(9), height=1, width=7) 
-    button9.grid(row=24, column=2) 
- 
-    button0 = Button(master, text=' 0 ', fg='black', bg='white',command=lambda: press(0), height=1, width=7) 
-    button0.grid(row=25, column=0) 
- 
-    plus = Button(master, text=' + ', fg='black', bg='white', command=lambda: press("+"), height=1, width=7) 
-    plus.grid(row=22, column=4) 
- 
-    minus = Button(master, text=' - ', fg='black', bg='white', command=lambda: press("-"), height=1, width=7) 
-    minus.grid(row=23, column=4) 
- 
-    multiply = Button(master, text=' * ', fg='black', bg='white', command=lambda: press("*"), height=1, width=7) 
-    multiply.grid(row=24, column=4) 
- 
-    divide = Button(master, text=' / ', fg='black', bg='white', command=lambda: press("/"), height=1, width=7) 
-    divide.grid(row=25, column=4) 
- 
-    equal = Button(master, text=' = ', fg='black', bg='white',command=equalpress, height=1, width=7) 
-    equal.grid(row=26, column=4) 
- 
-    clear = Button(master, text='Clear', fg='black', bg='white',command=clear, height=1, width=7) 
-    clear.grid(row=25, column=2) 
- 
-    Decimal= Button(master, text='.', fg='black', bg='white',command=lambda: press('.'), height=1, width=7) 
-    Decimal.grid(row=25, column=1)
+equation = StringVar() 
+expression_field = Entry(master, textvariable=equation) 
+expression_field.grid(row=20,columnspan=4, ipadx=70)
+
+button1 = Button(master, text=' 1 ', fg='black', bg='white',command=lambda: press(1), height=1, width=7) 
+button1.grid(row=22, column=0) 
+
+button2 = Button(master, text=' 2 ', fg='black', bg='white',command=lambda: press(2), height=1, width=7) 
+button2.grid(row=22, column=1) 
+
+button3 = Button(master, text=' 3 ', fg='black', bg='white',command=lambda: press(3), height=1, width=7) 
+button3.grid(row=22, column=2) 
+
+button4 = Button(master, text=' 4 ', fg='black', bg='white',command=lambda: press(4), height=1, width=7) 
+button4.grid(row=23, column=0) 
+
+button5 = Button(master, text=' 5 ', fg='black', bg='white',command=lambda: press(5), height=1, width=7) 
+button5.grid(row=23, column=1) 
+
+button6 = Button(master, text=' 6 ', fg='black', bg='white',command=lambda: press(6), height=1, width=7) 
+button6.grid(row=23, column=2) 
+
+button7 = Button(master, text=' 7 ', fg='black', bg='white',command=lambda: press(7), height=1, width=7) 
+button7.grid(row=24, column=0) 
+
+button8 = Button(master, text=' 8 ', fg='black', bg='white',command=lambda: press(8), height=1, width=7) 
+button8.grid(row=24, column=1) 
+
+button9 = Button(master, text=' 9 ', fg='black', bg='white',command=lambda: press(9), height=1, width=7) 
+button9.grid(row=24, column=2) 
+
+button0 = Button(master, text=' 0 ', fg='black', bg='white',command=lambda: press(0), height=1, width=7) 
+button0.grid(row=25, column=0) 
+
+plus = Button(master, text=' + ', fg='black', bg='white', command=lambda: press("+"), height=1, width=7) 
+plus.grid(row=22, column=4) 
+
+minus = Button(master, text=' - ', fg='black', bg='white', command=lambda: press("-"), height=1, width=7) 
+minus.grid(row=23, column=4) 
+
+multiply = Button(master, text=' * ', fg='black', bg='white', command=lambda: press("*"), height=1, width=7) 
+multiply.grid(row=24, column=4) 
+
+divide = Button(master, text=' / ', fg='black', bg='white', command=lambda: press("/"), height=1, width=7) 
+divide.grid(row=25, column=4) 
+
+equal = Button(master, text=' = ', fg='black', bg='white',command=equalpress, height=1, width=7) 
+equal.grid(row=26, column=4) 
+
+clear = Button(master, text='Clear', fg='black', bg='white',command=clear, height=1, width=7) 
+clear.grid(row=25, column=2) 
+
+Decimal= Button(master, text='.', fg='black', bg='white',command=lambda: press('.'), height=1, width=7) 
+Decimal.grid(row=25, column=1)
 
 shape.grid   (row=0, column=1)
 oper.grid	 (row=1, column=1)
@@ -204,5 +220,6 @@ def buttons():
 
 	Notes = Button(master, text="Notes", command=notes)
 	Notes.grid(row=11, column=1,columnspan=1, rowspan=2,sticky=W+E+N+S, padx=5, pady=5)
+	
 buttons()	
 master.mainloop()
